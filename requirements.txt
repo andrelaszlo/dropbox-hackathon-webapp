@@ -1,4 +1,4 @@
 web.py
 redis
-dropbox3
+dropbox
 gunicorn
