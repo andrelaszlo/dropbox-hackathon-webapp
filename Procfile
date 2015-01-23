@@ -1,2 +1,3 @@
 #web: gunicorn gettingstarted.wsgi --log-file -
-web: python hello.py $PATH
+web: gunicorn hello:wsgiapp --log-file -
+#web: python hello.py $PATH

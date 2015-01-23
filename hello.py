@@ -13,6 +13,10 @@ class hello:
             name = 'World'
         return 'Hello, ' + name + '!'
 
+# For serving using any wsgi server
+wsgiapp = app.wsgifunc()
+
 if __name__ == "__main__":
+    app.run()
     port = int(os.environ.get('PORT', 9000))
-    app.run(host='0.0.0.0', port=port)
+    web.httpserver.runsimple(app, server_address=('0.0.0.0', port))
