@@ -2,7 +2,7 @@ import os
 import logging
 
 from os import path
-from dropbox.client import DropboxOAuth2Flow
+from dropbox.client import DropboxOAuth2Flow, DropboxClient
 from flask import (Flask, request, url_for, redirect, jsonify, json, session,
                    render_template)
 
@@ -32,12 +32,20 @@ def authorize_start():
     authorize_url = get_dropbox_auth_flow(session).start()
     return redirect(authorize_url, 302)
 
+def dropbox_init(access_token):
+    client = DropboxClient(access_token)
+    try:
+        client.put_file('test.txt', "Hello world")
+    except: # FIXME
+        logging.exception("Couldn't put file")
+
 # URL handler for /dropbox-auth-finish
 @app.route("/auth-finish", methods=['GET'])
 def dropbox_auth_finish():
     try:
         access_token, user_id, url_state = \
             get_dropbox_auth_flow(session).finish(request.args)
+        dropbox_init(access_token)
         return render_template('auth_complete.html')
     except DropboxOAuth2Flow.BadRequestException, e:
         http_status(400)
