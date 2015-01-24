@@ -1,6 +1,7 @@
 import os
 import logging
 import urllib2
+import bs4 as BeautifulSoup
 
 from os import path
 from dropbox.client import DropboxOAuth2Flow, DropboxClient
@@ -71,12 +72,18 @@ def err(msg):
         'message': msg
     })
 
+def text_tail(node):
+    yield node.text
+    yield node.tail
+
 @app.route("/save", methods = ['POST'])
 def save():
-    url = request.form['save']
+    url = request.form['save'] 
     response = urllib2.urlopen(url)
     html = response.read()
-    return str(url) 
+    soup = BeautifulSoup.BeautifulSoup(html)
+    parsed = soup.find(id="entry-body")
+    return parsed.text
 
 # Stolen from our previous hack wowhack/plautocompleter
 @app.after_request
