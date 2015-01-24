@@ -1,6 +1,6 @@
 import os
 import logging
-import urllib
+import urllib2
 
 from os import path
 from dropbox.client import DropboxOAuth2Flow, DropboxClient
@@ -74,7 +74,8 @@ def err(msg):
 @app.route("/save", methods = ['POST'])
 def save():
     url = request.form['save']
-    urllib.urlretrieve(url, "article")
+    response = urllib2.urlopen(url)
+    html = response.read()
     return str(url) 
 
 # Stolen from our previous hack wowhack/plautocompleter
