@@ -1,5 +1,6 @@
 import os
 import logging
+import urllib2
 
 from os import path
 from dropbox.client import DropboxOAuth2Flow, DropboxClient
@@ -45,7 +46,7 @@ def dropbox_auth_finish():
     try:
         access_token, user_id, url_state = \
             get_dropbox_auth_flow(session).finish(request.args)
-        #dropbox_init(access_token)
+        dropbox_init(access_token)
         return render_template('auth_complete.html')
     except DropboxOAuth2Flow.BadRequestException, e:
         http_status(400)
@@ -70,7 +71,14 @@ def err(msg):
         'message': msg
     })
 
-# Stolen from wowhack/plautocompleter
+@app.route("/save", methods = ['POST'])
+def save():
+    url = request.form['save']
+    response = urllib2.urlopen(url)
+    html = response.read()
+    return str(url) 
+
+# Stolen from our previous hack wowhack/plautocompleter
 @app.after_request
 def add_header(response):
 
