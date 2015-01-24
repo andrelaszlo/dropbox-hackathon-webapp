@@ -16,8 +16,14 @@ if APP_SECRET_KEY == 'testing':
 app = Flask(__name__)
 app.secret_key = APP_SECRET_KEY
 
+def url(path):
+    base = request.url_root
+    if base.find('localhost') == -1:
+        base = base.replace("http://", "https://")
+    return base + path
+
 def get_dropbox_auth_flow(web_app_session):
-    redirect_uri = request.url_root + "auth-finish"
+    redirect_uri = url('auth-finish')
     return DropboxOAuth2Flow(DROPBOX_KEY, DROPBOX_SECRET, redirect_uri,
                                      session, "dropbox-auth-csrf-token")
 
