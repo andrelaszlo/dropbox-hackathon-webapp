@@ -45,7 +45,7 @@ def dropbox_auth_finish():
     try:
         access_token, user_id, url_state = \
             get_dropbox_auth_flow(session).finish(request.args)
-        dropbox_init(access_token)
+        #dropbox_init(access_token)
         return render_template('auth_complete.html')
     except DropboxOAuth2Flow.BadRequestException, e:
         http_status(400)
