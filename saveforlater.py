@@ -41,13 +41,22 @@ def dropbox_init(access_token):
     except: # FIXME
         logging.exception("Couldn't put file")
 
+@app.route("/session", methods=['GET'])
+def test_session():
+    if 'foo' in session:
+        del session['foo']
+    return '<pre>%s</pre>' % '<br>'.join('%r: %r' % (k,v) for k, v in session.items())
+
 # URL handler for /dropbox-auth-finish
 @app.route("/auth-finish", methods=['GET'])
 def dropbox_auth_finish():
     try:
         access_token, user_id, url_state = \
             get_dropbox_auth_flow(session).finish(request.args)
-        dropbox_init(access_token)
+        session['access_token'] = access_token
+        session['user_id'] = user_id
+        session['url_state'] = url_state
+        #dropbox_init(access_token)
         return render_template('auth_complete.html')
     except DropboxOAuth2Flow.BadRequestException, e:
         http_status(400)
